@@ -27,11 +27,11 @@ The simplest sort of dropdown has a button that can toggle a menu open or closed
 
 ### Rendering a button and items
 
-We'll start by rendering the button and the items. At this point our render function contains only an empty div, so let's fill in the rest of the HTML we need:
+We'll start by rendering the button and the items. At this point our render function contains only a simple div, so let's fill in the rest of the HTML we need:
 
 ```hs
-render :: State -> H.ParentHTML Query ChildQuery ChildSlot m
-render st =
+render :: StateType -> H.ComponentHTML ActionType ChildSlots MonadType
+render _ =
   HH.div_
   [ HH.h1_
     [ HH.text "Dropdown" ]
@@ -49,9 +49,9 @@ render st =
 !!! danger ""
     Make sure to compile this code and view the new output! You should see a header, a button, and two items in the list. After each step, make sure your code still compiles.
 
-### A better `#!hs State` type
+### A better `#!hs StateType`
 
-It's already clear we're going to need more than `#!hs Unit` for our `#!hs State` type. We at least need to know three things:
+It's already clear we're going to need more than `#!hs Unit` for our `#!hs StateType`. We at least need to know three things:
 
 - If the menu is toggled on or off
 - The currently-selected item (if there is one)
@@ -60,7 +60,7 @@ It's already clear we're going to need more than `#!hs Unit` for our `#!hs State
 We can represent each of these with simple types in our state:
 
 ```hs
-type State =
+type StateType =
   { isOpen :: Boolean
   , selectedItem :: Maybe String
   , availableItems :: Array String
@@ -70,7 +70,7 @@ type State =
 Now that our state contains these three fields, we need to update our `#!hs initialState` function to produce the right type of values:
 
 ```hs
-initialState :: Input -> State
+initialState :: Input -> StateType
 initialState = const
   { isOpen: false
   , selectedItem: Nothing
@@ -82,14 +82,14 @@ initialState = const
   }
 ```
 
-Finally, lets update our render function to leverage the information now contained in `#!hs State`. If there's a selected item, that will be the button's text; if not, we'll fall back to a default message. If the menu is open, we'll list out the available items for selection.
+Finally, let's update our render function to leverage the information now contained in `#!hs StateType`. If there's a selected item, that will be the button's text; if not, we'll fall back to a default message. If the menu is open, we'll list out the available items for selection.
 
 For code clarity, we'll also break out the dropdown into its own helper function.
 
 ```hs
 import Data.Maybe (fromMaybe)
 
-render :: State -> H.ParentHTML Query ChildQuery ChildSlot m
+render :: StateType -> H.ComponentHTML ActionType ChildSlots MonadType
 render st =
   HH.div_
   [ HH.h1_
@@ -97,7 +97,7 @@ render st =
   , dropdown st
   ]
 
-dropdown :: State -> H.ParentHTML Query ChildQuery ChildSlot m
+dropdown :: StateType -> H.ComponentHTML ActionType ChildSlots MonadType
 dropdown st =
   HH.div_
   [ HH.button_
@@ -131,12 +131,18 @@ We just wrote the rendering we need for an (admittedly ugly) dropdown. The rende
 The first thing we'll do is bring in the `Select` library in the first place.
 
 ```hs
-import Select as Select
-import Select.Setters as Setters
+import Select as S
+import Select.Setters as SS
 ```
 
 !!! tip
     You can always [view the module documentation for Select on Pursuit](https://pursuit.purescript.org/packages/purescript-halogen-select) or the [source code on GitHub](https://github.com/citizennet/purescript-halogen-select). This is useful when integrating with third-party components so that you can check out the `#!hs Input`, `#!hs State`, `#!hs Query`, and `#!hs Message` types.
+
+
+
+
+
+ --------  Todo ---------- remainder of this section is irrelevant.
 
 Next, we need to update our `#!hs ChildSlot` and `#!hs ChildQuery` types. We're only going to have one dropdown so we can leave the child slot as `#!hs Unit`; we do need to add the `Select` component's query type to our `#!hs ChildQuery` synonym, however.
 

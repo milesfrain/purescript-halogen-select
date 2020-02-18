@@ -4,7 +4,10 @@ title: Project Setup for PureScript Halogen Select
 Halogen is a powerful framework for building PureScript applications. It’s used by several companies, including SlamData and my own company, CitizenNet (a Condé Nast company), among others. The `Select` library is written for the Halogen framework, so if you don’t know how to use Halogen yet, you ought to start with the [Halogen guide](https://github.com/slamdata/purescript-halogen/tree/master/docs). That said, with only passing familiarity with Halogen, you should be able to follow along just fine!
 
 ## Setup
-Instead of creating a new Halogen project from scratch, we’ll start with a minimal starter template. This template includes the HTML, build scripts, and basic `Main.purs` file necessary to run your Halogen application. It also includes a component with the bare minimum definitions in place. This component does nothing at all, which is nice because we can easily use it to start building dropdowns, typeaheads, and other components.
+Instead of creating a new Halogen project from scratch, we’ll start with a minimal starter template. This template includes the HTML, build scripts, and basic `Main.purs` file necessary to run your Halogen application. It also includes a component with the bare minimum definitions in place. This component barely does anything, which is nice because we can easily use it to start building dropdowns, typeaheads, and other components.
+
+Todo - may just convert back to NPM. See
+https://github.com/purescript/documentation/issues/274#issuecomment-535277713
 
 !!! info
     We prefer Yarn over NPM for package management and scripts, but either one will work. Anywhere you see `#!sh yarn <script>`, you can substitute `#!sh npm run <script>` instead. Feel free to look at the `package.json` file if you want to see what these scripts are doing.
@@ -16,11 +19,8 @@ First, clone the Halogen template project from CitizenNet, install dependencies,
 Next, make sure to install `Select`:
 
 ```shell
-bower i --save purescript-halogen-select
+yarn spago install halogen-select
 ```
-
-!!! warning
-    The PureScript compiler recently updated to version `0.12` and many core libraries updated at the same time. If you run into version conflicts, please reach out on the [Purescript user forum](https://discourse.purescript.org).
 
 And that's it! You now have everything you need to complete the tutorials. This is the full set of steps you can follow to get all set up:
 
@@ -32,34 +32,37 @@ git clone git@github.com:citizennet/purescript-halogen-template.git
 cd purescript-halogen-template && yarn
 
 # Install a new package: purescript-halogen-select
-bower i --save purescript-halogen-select
+yarn spago install halogen-select
 
 # Build the project
 yarn build
 
 # Open the application in the browser
-open dist/index.html
+open assets/index.html
 ```
 
 After you complete each step in the tutorial, make sure to rebuild the project and refresh your browser to see your updated component.
 
 ### Helpful tip: Watching for file changes
-It’s convenient to keep a terminal running which watches for file changes, rebuilds the project, and bundles JavaScript on your behalf. Then, when you make a change to a file, all you have to do is wait a moment and refresh the page to see your updates.
+It’s convenient to keep a terminal running which watches for file changes, rebuilds the project, bundles JavaScript, and refreshes the browser on your behalf. Then, when you make a change to a file, your updates appear immediately on your app's webpage.
 
-When I write PureScript, I usually work with two terminals open. I use the first to write code, and the second to watch those changes and rebuild. I recommend using the same technique as you walk through these tutorials. These three steps are all you need:
+The fastest reloads (less than 1 second) are achieved with `yarn servefast`, but this requires a compatible editor.
+A slower (greater than 1 second), but editor-agnostic, refresh can be achieved with a combination of `yarn watch` and `yarn serve`. The template readme describes all of these workflow options.
 
-1. Open a new terminal and run the `#!sh watch` script
-2. Open your editor to a source file
-3. Open a new tab in your browser pointed to `dist/index.html` so you can see the app
+When I write PureScript, I keep a spare terminal open to watch for changes. I recomend using the same technique as you walk through these tutorials.
 
-To test everything is working, try editing `src/Component.purs` to change the title of the page. The project should automatically rebuild on save. Then, when you refresh the browser, you should see your new text rendered.
+Assuming your editor meets the requirements, simply run `yarn servefast` in a new terminal. It should launch a new browser window with your app.
+
+To test everything is working, try editing `src/Component.purs` to change the text of the component `div` from "stuff" to something else. When you save the file, the browser window that was opened earlier should automatically refresh and display your changes.
 
 ```shell
-# Watch for changes and rebuild (remember to refresh the page after builds)
-yarn watch
+# Watch for changes, rebuild, and refresh
+yarn servefast
 ```
 
 ## A whirlwind tour of our starter component
+
+Todo - Seems like it would be better to focus energy on maintaining a single golden halogen reference.
 
 The project starts off with a minimal Halogen component. As a brief refresher, I'll step through each of the types and functions involved.
 
@@ -67,6 +70,8 @@ The project starts off with a minimal Halogen component. As a brief refresher, I
     If you are already quite familiar with Halogen, feel free to skip this section entirely.
 
 ### Query Algebra
+
+Todo - Much different in V5. Link changed.
 
 How does a component know what to do?
 
@@ -103,6 +108,8 @@ type State = Unit
 A component's `#!hs Input` type can be thought of as a container for any information you'd like to pass to the component. It's most commonly used to provide a component with some initial `#!hs State` values via the `#!hs initialState :: Input -> State` function. However, it's more powerful than that!
 
 Once a Halogen component has been mounted to the DOM, there is only one way to continue sending it new information: its `#!hs Input` type paired with its `#!hs receiver` function. Every time the parent component re-renders, it will send a new `#!hs Input` to the child component.
+
+Todo - new info could also be sent via Query request or tell.
 
 For more information on the `#!hs Input` type, see the [Parent and Child Components](https://github.com/slamdata/purescript-halogen/blob/master/docs/5%20-%20Parent%20and%20child%20components.md#input-values) section of the Halogen guide.
 
